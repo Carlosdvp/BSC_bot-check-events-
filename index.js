@@ -32,7 +32,7 @@ var newDeposits = function() {
 			// get the event details
 			bnbfury.getPastEvents('NewDeposit', 
 				{
-					fromBlock: 16113102,
+					fromBlock: 16120524,
 					toBlock: 'latest'
 				}).then((events) => {
 					console.log('Number of Transactions: ' + events.length)
