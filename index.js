@@ -26,7 +26,7 @@ let bnbfury = new web3.eth.Contract(BNBFury_ABI, BNBFury_ADDRESS)
 var newDeposits = function() {
 	bnbfury.getPastEvents('NewDeposit', 
 		{
-			fromBlock: 16111476,
+			fromBlock: 16113102,
 			toBlock: 'latest'
 		}).then((events) => {
 			console.log(events.length)
@@ -53,7 +53,11 @@ var newDeposits = function() {
 			})
 		})
 	// Get Contract Balance
-	var balance = new web3.eth.getBalance(BNBFury_ADDRESS).then(console.log)
+	var balance = new web3.eth.getBalance(BNBFury_ADDRESS).then((bal) => {
+		var bnbBalance = web3.utils.fromWei(bal, 'ether')
+		console.log('BNB Balance: ' + bnbBalance)
+		return bnbBalance;
+	})
 }
 
 // run the function to check the contract once every second
