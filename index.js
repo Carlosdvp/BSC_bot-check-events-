@@ -24,40 +24,59 @@ let bnbfury = new web3.eth.Contract(BNBFury_ABI, BNBFury_ADDRESS)
 // 0.12 BNB = 120000000000000000  ($45)
 
 var newDeposits = function() {
-	bnbfury.getPastEvents('NewDeposit', 
-		{
-			fromBlock: 16113102,
-			toBlock: 'latest'
-		}).then((events) => {
-			console.log(events.length)
-
-			events.map(event => {
-				// check the amount of BNB invested, only show deposits greater then 0.12 BNB
-				let txAmount = event.returnValues.amount;
-				let targetAmount = 120000000000000000
-
-				// lets make an aray to hold the events
-				var eventsArray = []
-				// only show Tx if over 0.06 BNB
-				if (txAmount >= targetAmount) {
-					var block = event.blockNumber,
-							TxHash = event.transactionHash,
-							amount = web3.utils.fromWei(event.returnValues.amount, 'ether');
-
-					eventsArray.push([block, TxHash, amount])
-					// only show the latest element
-					console.table(eventsArray[0])
-					// oven a browser tab for each transaction in the vents object
-					// open(`https://bscscan.com/tx/${event.transactionHash}`)
-				}
-			})
-		})
 	// Get Contract Balance
 	var balance = new web3.eth.getBalance(BNBFury_ADDRESS).then((bal) => {
 		var bnbBalance = web3.utils.fromWei(bal, 'ether')
-		console.log('BNB Balance: ' + bnbBalance)
-		return bnbBalance;
+
+		// only grab the event info if there is a balance in the contract
+		if (bnbBalance > 0) {
+			console.log('BNB Balance: ' + bnbBalance)
+			// get the event details
+			bnbfury.getPastEvents('NewDeposit', 
+				{
+					fromBlock: 16113102,
+					toBlock: 'latest'
+				}).then((events) => {
+					console.log('Number of Transactions: ' + events.length)
+					// lets make an aray to hold the events
+					var eventsArray = []
+
+					events.map(event => {
+						// check the amount of BNB invested, only show deposits greater then 0.12 BNB
+						let txAmount = event.returnValues.amount;
+						let targetAmount = 120000000000000000
+
+						// only show Tx if over 0.12 BNB
+						if (txAmount >= targetAmount) {
+							var block = event.blockNumber,
+									TxHash = event.transactionHash,
+									amount = web3.utils.fromWei(event.returnValues.amount, 'ether');
+
+							eventsArray.push([block, TxHash, amount])
+
+							console.table(eventsArray)
+						}
+					})
+				})
+
+		} else {
+			// Get the current block and console log a 0 balance message
+			bnbfury.getPastEvents('NewDeposit', 
+				{
+					fromBlock: 16113102,
+					toBlock: 'latest'
+				}).then((events) => {
+					events.map(event => {
+						var block = event.blockNumber;
+						console.log('Current Block: ', block)
+					})
+				})
+			console.log('--------------------------------------')
+			console.log('Balance is at 0')
+			console.log('--------------------------------------')
+		}
 	})
+
 }
 
 // run the function to check the contract once every second
