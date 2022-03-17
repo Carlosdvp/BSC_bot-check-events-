@@ -29,13 +29,15 @@ var newDeposits = function() {
 		// only grab the event info if there is a balance in the contract
 		if (bnbBalance > 0) {
 			console.log('BNB Balance: ' + bnbBalance)
+			console.log('***************************')
+
 			// get the event details
 			bnbfury.getPastEvents('NewDeposit', 
 				{
-					fromBlock: 16120524,
+					fromBlock: 16143278,
 					toBlock: 'latest'
 				}).then((events) => {
-					console.log('Number of Transactions: ' + events.length)
+					// console.log('Number of Transactions: ' + events.length)
 					// lets make an aray to hold the events
 					var eventsArray = []
 
@@ -57,14 +59,13 @@ var newDeposits = function() {
 						}
 					})
 				})
-
 		} else {
 			// Get the current block and console log a 0 balance message
 			bnbfury.getPastEvents('allEvents').then((events) => {
 					events.map(event => {
 						var block = event.blockNumber;
-						console.log('Event: ', event.event)
-						console.log('Current Block: ', block)
+						// console.log('Event: ', event.event)
+						// console.log('Current Block: ', block)
 					})
 				})
 			console.log('--------------------------------------')
